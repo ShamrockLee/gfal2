@@ -241,7 +241,16 @@ std::string TokenRetriever::perform_request(HttpRequest& request, std::string de
         throw Gfal::CoreException(http_plugin_domain, davix2errno(err->getStatus()), errmsg.str());
     }
 
-    return std::string(request.getAnswerContent());
+    // Compare the response obtained from the char pointer with the one from the vector<char> (GGUS#155903)
+    std::string result(request.getAnswerContent());
+    auto resultVec = request.getAnswerContentVec();
+    std::string resultFromVec(resultVec.begin(), resultVec.end());
+
+    if (result.size() != resultFromVec.size()) {
+        gfal2_log(G_LOG_LEVEL_ERROR, "result.size=%d / resultFromVec.size=%d", result.size(), resultFromVec.size());
+    }
+
+    return result;
 }
 
 gfal_http_token_t TokenRetriever::retrieve_token(const Uri& _url,
