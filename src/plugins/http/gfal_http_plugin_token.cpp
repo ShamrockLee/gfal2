@@ -241,14 +241,7 @@ std::string TokenRetriever::perform_request(HttpRequest& request, std::string de
         throw Gfal::CoreException(http_plugin_domain, davix2errno(err->getStatus()), errmsg.str());
     }
 
-    // Compare the response obtained from the char pointer with the one from the vector<char> (GGUS#155903)
-    std::string result(request.getAnswerContent());
-    auto resultVec = request.getAnswerContentVec();
-    std::string resultFromVec(resultVec.begin(), resultVec.end());
-    gfal2_log(G_LOG_LEVEL_DEBUG, "result.size=%d / resultFromVec.size=%d / getAnswerSize()=%d",
-              result.size(), resultFromVec.size(), request.getAnswerSize());
-
-    return result;
+    return std::string(request.getAnswerContent());
 }
 
 gfal_http_token_t TokenRetriever::retrieve_token(const Uri& _url,
@@ -379,7 +372,10 @@ std::string MacaroonRetriever::perform_request(HttpRequest& request, std::string
         throw Gfal::CoreException(http_plugin_domain, davix2errno(err->getStatus()), errmsg.str());
     }
 
-    return std::string(buffer);
+    std::string result(buffer);
+    gfal2_log(G_LOG_LEVEL_DEBUG, "result.size=%d / segment_size=%d", result.size(), segment_size);
+
+    return result;
 }
 
 std::string MacaroonRetriever::macaroon_request_content(unsigned validity,
