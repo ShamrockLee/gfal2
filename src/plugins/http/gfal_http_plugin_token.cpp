@@ -245,10 +245,8 @@ std::string TokenRetriever::perform_request(HttpRequest& request, std::string de
     std::string result(request.getAnswerContent());
     auto resultVec = request.getAnswerContentVec();
     std::string resultFromVec(resultVec.begin(), resultVec.end());
-
-    if (result.size() != resultFromVec.size()) {
-        gfal2_log(G_LOG_LEVEL_ERROR, "result.size=%d / resultFromVec.size=%d", result.size(), resultFromVec.size());
-    }
+    gfal2_log(G_LOG_LEVEL_DEBUG, "result.size=%d / resultFromVec.size=%d / getAnswerSize()=%d",
+              result.size(), resultFromVec.size(), request.getAnswerSize());
 
     return result;
 }
